@@ -19,5 +19,8 @@
   "dependencies": {
     "ramda": "^0.25.0",
     "react": "^16.2.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^7.1.2"
   }
 }
