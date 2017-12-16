@@ -1,12 +1,12 @@
-import React, {Component} from 'react'
-import ChannelSection from './channels/ChannelSection.jsx'
+import React, {Component} from 'react';
+import ChannelSection from './channels/ChannelSection.jsx';
 
 class App extends Component{
   constructor(props){
     super(props);
     this.state = {
       channels: []
-    }
+    };
   }
   addChannel(name){
     let {channels} = this.state;
