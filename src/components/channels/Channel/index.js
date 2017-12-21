@@ -5,6 +5,7 @@ class Channel extends React.Component {
 
     onClick (e) {
         e.preventDefault()
+        debugger
         const {setChannel, channel} = this.props
         setChannel(channel)
     }
@@ -13,19 +14,18 @@ class Channel extends React.Component {
         const {channel} = this.props
         return (
             <li>
-                <a onClick={() => {this.props.onClick()}}>
+                <a onClick={e => {this.onClick(e)}}>
                     {channel.name}
                 </a>    
             </li>
 
         )
     }
-
 }
 
 Channel.propTypes = {
-    channel: React.PropTypes.object.isRequired,
-    setChannel: React.PropTypes.func.isRequired
+    channel: PropTypes.object.isRequired,
+    setChannel: PropTypes.func.isRequired
 }
 
 export default Channel

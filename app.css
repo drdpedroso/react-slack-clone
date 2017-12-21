@@ -5,8 +5,15 @@
   height: 100vh;
   font-size: 16px;
 }
+
 .nav{
   flex-basis: 20%;
+}
+
+.collumn {
+  display:flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 
 .messages-container{
