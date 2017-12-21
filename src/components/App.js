@@ -3,6 +3,7 @@ import fecha from 'fecha'
 import ChannelSection from './channels/ChannelSection'
 import UserSection from './users/UserSection'
 import MessageSection from './messages/MessageSection'
+import Socket from '../socket'
 
 class App extends Component{
   constructor(props){
@@ -11,36 +12,89 @@ class App extends Component{
     this.state = {
       channels: [],
       users: [],
-      messages: []
+      messages: [],
+      connected: false
     }
 
   }
 
-  addChannel (name) {
+  componentDidMount () {
+    const ws = this.ws = new WebSocket('ws://echo.websocket.org')
+    const socket = this.socket = new Socket(ws)
+    socket.on('connect', this.onConnect.bind(this))
+    socket.on('disconnect', this.onDisConnect.bind(this))
+    socket.on('channel add', this.onAddChannel.bind(this))
+    socket.on('user add', this.onAddUser.bind(this))
+    socket.on('user edit', this.onEditUser.bind(this))
+    socket.on('user remove', this.onRemoveUser.bind(this))
+    socket.on('message add', this.onAddMessage.bind(this))
+  }
+
+  onAddChannel (channel) {
     let {channels} = this.state
-    channels.push({id: channels.length, name})
+    channels.push(channel)
     this.setState({channels})
-    // TODO: Send to server
+  }
+
+  onAddMessage (message) {
+    let {messages} = this.state
+    messages.push(message)
+    this.setState({messages})
+  }
+
+  onRemoveUser (removeUser) {
+    let {users} = this.state
+    users = users.filter(user => {
+      return user.id !== removeUser.id
+    })
+    this.setState({users})
+  }
+
+  onEditUser (editUser) {
+    let {users} = this.state
+    users = users.map(user => {
+      if (editUser.id === user.id) {
+        return editUser
+      } else {
+        return user
+      }
+    })
+    this.setState({users})
+  }
+
+  onAddUser (user) {
+    let {users} = this.state
+    users.push(user)
+    this.setState({users})
+  }
+
+  onConnect () {
+    this.setState({connected: true})
+    this.socket.emit('channel subscribe')
+    this.socket.emit('user subscribe')
+  }
+
+  onDisConnect () {
+    this.setState({connected: false})
+  }
+
+  addChannel (name) {
+    this.socket.emit('channel add', {name})
   }
 
   addMessage (text) {
-    let {messages} = this.state
-    const createdAt = fecha.format(new Date(), 'HH:mm:ss DD/MM/YY');
-    messages.push({id: messages.length, text, timestamp: createdAt})
-    this.setState({messages})
-    // TODO: Send to server
+    const {activeChannel} = this.state
+    this.socket.emit('message add', {channelId: activeChannel.id, text})
   }
 
   setChannel (activeChannel) {
     this.setState({activeChannel})
-    // TODO: Get Channels Messages
+    this.socket.emit('message unsubscribe')
+    this.setState({messages: []})
   }
 
   addUser (name) {
-    let {users} = this.state
-    users.push({id: users.length, name})
-    this.setState({users})
-    // TODO: Send to server
+    this.socket.emit('user edit', {name})
   }
 
   render(){
