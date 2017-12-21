@@ -5,7 +5,6 @@ class Channel extends React.Component {
 
     onClick (e) {
         e.preventDefault()
-        debugger
         const {setChannel, channel} = this.props
         setChannel(channel)
     }

@@ -5,7 +5,6 @@ import Channel from '../Channel'
 class ChannelList extends React.Component {
     render () {
         const {setChannel} = this.props
-        console.log(setChannel)
         return (
             <ul>
                 {
